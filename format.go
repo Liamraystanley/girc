@@ -350,3 +350,80 @@ func Glob(input, match string) bool {
 	// Check suffix last.
 	return trailingGlob || strings.HasSuffix(input, parts[last])
 }
+
+const maxWordSplitLength = 30
+
+// splitAtWord is a text splitter that takes into consideration a few things:
+//    * Ensuring the returned text is no longer than maxWidth.
+//    * Attempting to split at the closest word boundary, while still staying inside
+//      of the specific maxWidth.
+//    * if there is no good word boundry for longer words (or e.g. links, raw data, etc)
+//      that are above maxWordSplitLength characters, split the word into chunks to fit the
+// maximum width.
+func splitAtWord(input string, maxWidth int) (output []string) {
+	// TODO: breaks multi-spaces.
+	words := strings.Fields(input)
+
+	// TODO: don't split a url if there isn't enough space, if it can safely fit within
+	// the next line.
+	// TODO: also split on newline, if splitting is enabled? makes it easier to just
+	// pipe text in.
+	// TODO: if word contains a dash, and adding the word to the line causes an overflow,
+	// try to split on the dash?
+
+	// Increment maxWidth for calculations, because we always prefix with a space (then
+	// strip it before we return).
+	maxWidth++
+
+	var i, spaceRemaining int
+	var split string
+
+setupNextSplit:
+	spaceRemaining = maxWidth
+	split = ""
+beginLoop:
+	for i < len(words) {
+		// Last line was the perfect length, add to output and keep looping.
+		if spaceRemaining == 0 {
+			output = append(output, split[1:])
+			goto setupNextSplit
+		}
+
+		// Word makes the line too long.
+		if len(words[i])+1 > spaceRemaining {
+			// Is the word small enough to where we don't need to split it up?
+			if len(words[i]) < maxWordSplitLength && maxWidth >= maxWordSplitLength {
+				output = append(output, split[1:])
+				goto setupNextSplit
+			}
+
+			split += " " + words[i][0:spaceRemaining-1]
+			if len(words) == i {
+				words = append(words, words[i][spaceRemaining-1:])
+			} else {
+				words = append(words[:i+1], words[i:]...)
+				words[i+1] = words[i][spaceRemaining-1:]
+				words[i] = words[i][0 : spaceRemaining-1]
+			}
+			spaceRemaining -= 1 + len(words[i][0:spaceRemaining-1])
+			i++
+			goto beginLoop
+		}
+
+		split += " " + words[i]
+		spaceRemaining -= 1 + len(words[i])
+
+		i++
+	}
+
+	if len(split) > 0 {
+		output = append(output, split[1:])
+	}
+
+	// At least return some kind of string, rather than nil.
+	if len(output) == 0 {
+		output = append(output, "")
+	}
+
+	return output
+}
