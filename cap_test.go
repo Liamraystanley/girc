@@ -104,7 +104,7 @@ func TestTagGetSetCount(t *testing.T) {
 	}
 
 	// Add a hidden ascii value at the end to make it invalid.
-	if err := e.Tags.Set("key", "invalid-value"+string(0x08)); err == nil {
+	if err := e.Tags.Set("key", "invalid-value"+string(rune(0x08))); err == nil {
 		t.Fatal("tag set of invalid value should have returned error")
 	}
 }
