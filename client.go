@@ -678,6 +678,29 @@ func (c *Client) GetServerOption(key string) (result string, ok bool) {
 	return result, ok
 }
 
+// GetServerOptionInt retrieves a server capability setting (as an integer) that was
+// retrieved during client connection. This is also known as ISUPPORT (or RPL_PROTOCTL).
+// Will panic if used when tracking has been disabled. Examples of usage:
+//
+//   nickLen, success := GetServerOption("MAXNICKLEN")
+//
+func (c *Client) GetServerOptionInt(key string) (result int, ok bool) {
+	var data string
+	var err error
+
+	data, ok = c.GetServerOption(key)
+	if !ok {
+		return result, ok
+	}
+
+	result, err = strconv.Atoi(data)
+	if err != nil {
+		ok = false
+	}
+
+	return result, ok
+}
+
 // NetworkName returns the network identifier. E.g. "EsperNet", "ByteIRC".
 // May be empty if the server does not support RPL_ISUPPORT (or RPL_PROTOCTL).
 // Will panic if used when tracking has been disabled.
