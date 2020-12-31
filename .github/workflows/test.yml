@@ -1,0 +1,24 @@
+name: test
+
+on:
+  push: {}
+  pull_request: { branches: [master] }
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-go@v2
+      with: { go-version: '1.x' }
+    - uses: actions/checkout@v2
+    - name: setup
+      run: |
+        go get -v golang.org/x/lint/golint
+    - name: lint
+      run: golint -min_confidence 0.9 -set_exit_status
+    - name: test
+      run: |
+        GORACE="exitcode=1 halt_on_error=1" go test -v -coverprofile=coverage.txt -race -timeout 3m -count 3 -cpu 1,4
+        bash <(curl -s https://codecov.io/bash)
+    - name: vet
+      run: go vet -v .

@@ -25,7 +25,7 @@ func (cmd *Commands) Nick(name string) {
 func (cmd *Commands) Join(channels ...string) {
 	// We can join multiple channels at once, however we need to ensure that
 	// we are not exceeding the line length. (see maxLength)
-	max := maxLength - len(JOIN) - 1
+	max := cmd.c.MaxEventLength() - len(JOIN) - 1
 
 	var buffer string
 
@@ -329,7 +329,7 @@ func (cmd *Commands) List(channels ...string) {
 
 	// We can LIST multiple channels at once, however we need to ensure that
 	// we are not exceeding the line length. (see maxLength)
-	max := maxLength - len(JOIN) - 1
+	max := cmd.c.MaxEventLength() - len(JOIN) - 1
 
 	var buffer string
 
@@ -356,7 +356,7 @@ func (cmd *Commands) List(channels ...string) {
 // Whowas sends a WHOWAS query to the server. amount is the amount of results
 // you want back.
 func (cmd *Commands) Whowas(user string, amount int) {
-	cmd.c.Send(&Event{Command: WHOWAS, Params: []string{user, string(amount)}})
+	cmd.c.Send(&Event{Command: WHOWAS, Params: []string{user, fmt.Sprint(amount)}})
 }
 
 // Monitor sends a MONITOR query to the server. The results of the query

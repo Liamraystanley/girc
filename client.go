@@ -678,6 +678,29 @@ func (c *Client) GetServerOption(key string) (result string, ok bool) {
 	return result, ok
 }
 
+// GetServerOptionInt retrieves a server capability setting (as an integer) that was
+// retrieved during client connection. This is also known as ISUPPORT (or RPL_PROTOCTL).
+// Will panic if used when tracking has been disabled. Examples of usage:
+//
+//   nickLen, success := GetServerOption("MAXNICKLEN")
+//
+func (c *Client) GetServerOptionInt(key string) (result int, ok bool) {
+	var data string
+	var err error
+
+	data, ok = c.GetServerOption(key)
+	if !ok {
+		return result, ok
+	}
+
+	result, err = strconv.Atoi(data)
+	if err != nil {
+		ok = false
+	}
+
+	return result, ok
+}
+
 // NetworkName returns the network identifier. E.g. "EsperNet", "ByteIRC".
 // May be empty if the server does not support RPL_ISUPPORT (or RPL_PROTOCTL).
 // Will panic if used when tracking has been disabled.
@@ -750,6 +773,21 @@ func (c *Client) HasCapability(name string) (has bool) {
 	c.state.RUnlock()
 
 	return has
+}
+
+// MaxEventLength return the maximum supported server length of an event. This is the
+// maximum length of the command and arguments, excluding the source/prefix supported
+// by the protocol. If state tracking is enabled, this will utilize ISUPPORT/IRCv3
+// information to more accurately calculate the maximum supported length (i.e. extended
+// length events).
+func (c *Client) MaxEventLength() (max int) {
+	if !c.Config.disableTracking {
+		c.state.RLock()
+		max = c.state.maxLineLength - c.state.maxPrefixLength
+		c.state.RUnlock()
+		return max
+	}
+	return DefaultMaxLineLength - DefaultMaxPrefixLength
 }
 
 // panicIfNotTracking will throw a panic when it's called, and tracking is

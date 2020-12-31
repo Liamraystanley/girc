@@ -1,11 +1,11 @@
 <p align="center"><a href="https://godoc.org/github.com/lrstanley/girc"><img width="270" src="http://i.imgur.com/DEnyrdB.png"></a></p>
 <p align="center">girc, a flexible IRC library for Go</p>
 <p align="center">
-  <a href="https://travis-ci.org/lrstanley/girc"><img src="https://travis-ci.org/lrstanley/girc.svg?branch=master" alt="Build Status"></a>
+  <a href="https://github.com/lrstanley/girc/actions"><img src="https://github.com/lrstanley/girc/workflows/test/badge.svg" alt="Test Status"></a>
   <a href="https://codecov.io/gh/lrstanley/girc"><img src="https://codecov.io/gh/lrstanley/girc/branch/master/graph/badge.svg" alt="Coverage Status"></a>
-  <a href="https://godoc.org/github.com/lrstanley/girc"><img src="https://godoc.org/github.com/lrstanley/girc?status.png" alt="GoDoc"></a>
+  <a href="https://pkg.go.dev/github.com/lrstanley/girc"><img src="https://pkg.go.dev/badge/github.com/lrstanley/girc" alt="GoDoc"></a>
   <a href="https://goreportcard.com/report/github.com/lrstanley/girc"><img src="https://goreportcard.com/badge/github.com/lrstanley/girc" alt="Go Report Card"></a>
-  <a href="https://byteirc.org/channel/%23%2Fdev%2Fnull"><img src="https://img.shields.io/badge/ByteIRC-%23%2Fdev%2Fnull-blue.svg" alt="IRC Chat"></a>
+  <a href="https://liam.sh/chat"><img src="https://img.shields.io/badge/community-chat%20with%20us-green.svg" alt="Community Chat"></a>
 </p>
 
 ## Status
